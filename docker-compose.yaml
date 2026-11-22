@@ -21,18 +21,27 @@ services:
     volumes:
       - ./migrations:/migrations
 
-#  lab-track-backend:
-#    build:
-#      context: ./src/backend
-#      dockerfile: Dockerfile
-#    container_name: lab-track-backend
-#    env_file:
-#      - ./src/backend/.env
-#      - ./.env
-#    environment:
-#      - POSTGRES_HOST=postgres
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - lab-track-postgres
-#    restart: always
+  #  lab-track-backend:
+  #    build:
+  #      context: ./src/backend
+  #      dockerfile: Dockerfile
+  #    container_name: lab-track-backend
+  #    env_file:
+  #      - ./src/backend/.env
+  #      - ./.env
+  #    environment:
+  #      - POSTGRES_HOST=postgres
+  #    ports:
+  #      - "8080:8080"
+  #    depends_on:
+  #      - lab-track-postgres
+  #    restart: always
+
+  lab-track-frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: lab-track-frontend
+    ports:
+      - "5173:4173"
+    restart: always
