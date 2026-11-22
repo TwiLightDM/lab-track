@@ -9,7 +9,7 @@ services:
     volumes:
       - ./out/pgdata:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,21 +21,21 @@ services:
     volumes:
       - ./migrations:/migrations
 
-  #  lab-track-backend:
-  #    build:
-  #      context: ./src/backend
-  #      dockerfile: Dockerfile
-  #    container_name: lab-track-backend
-  #    env_file:
-  #      - ./src/backend/.env
-  #      - ./.env
-  #    environment:
-  #      - POSTGRES_HOST=postgres
-  #    ports:
-  #      - "8080:8080"
-  #    depends_on:
-  #      - lab-track-postgres
-  #    restart: always
+  lab-track-backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: lab-track-backend
+    env_file:
+      - ./src/backend/.env
+      - ./.env
+    environment:
+      - POSTGRES_HOST=lab-track-postgres
+    ports:
+      - "9080:8080"
+    depends_on:
+      - lab-track-postgres
+    restart: always
 
   lab-track-frontend:
     build:

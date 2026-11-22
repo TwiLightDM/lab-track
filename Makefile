@@ -21,3 +21,6 @@ migrate-action:
 		-path /migrations \
 		-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@lab-track-postgres:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable \
 		"$(action)"
+
+swagger:
+	cd src/backend && swag init -g cmd/main.go -o ./internal/docs
