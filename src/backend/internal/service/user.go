@@ -40,10 +40,10 @@ func (s *UserService) CreateUser(
 	email,
 	password,
 	role string,
-) (string, string, error) {
+) (*entity.User, string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	user := entity.User{
@@ -56,14 +56,19 @@ func (s *UserService) CreateUser(
 	}
 
 	if err = s.repository.CreateUser(ctx, &user); err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	data := make(map[string]any)
 	data["id"] = user.Id
 	data["role"] = user.Role
 
-	return s.generateTokens(data)
+	accessToken, refreshToken, err := s.generateTokens(data)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	return &user, accessToken, refreshToken, nil
 }
 
 func (s *UserService) GetAllUsers(ctx context.Context) ([]entity.User, error) {
@@ -134,35 +139,45 @@ func (s *UserService) DeleteUser(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *UserService) RefreshTokens(ctx context.Context, id int) (string, string, error) {
+func (s *UserService) RefreshTokens(ctx context.Context, id int) (*entity.User, string, string, error) {
 	user, err := s.repository.GetUserById(ctx, id)
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	data := make(map[string]any)
 	data["id"] = user.Id
 	data["role"] = user.Role
 
-	return s.generateTokens(data)
+	accessToken, refreshToken, err := s.generateTokens(data)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	return user, accessToken, refreshToken, nil
 }
 
-func (s *UserService) Login(ctx context.Context, email, password string) (string, string, error) {
+func (s *UserService) Login(ctx context.Context, email, password string) (*entity.User, string, string, error) {
 	user, err := s.repository.GetUserByEmail(ctx, email)
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	data := make(map[string]any)
 	data["id"] = user.Id
 	data["role"] = user.Role
 
-	return s.generateTokens(data)
+	accessToken, refreshToken, err := s.generateTokens(data)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	return user, accessToken, refreshToken, nil
 }
 
 func (s *UserService) generateTokens(data map[string]any) (string, string, error) {

@@ -14,14 +14,14 @@ import (
 )
 
 type userService interface {
-	CreateUser(ctx context.Context, name, surname, email, password, role string) (string, string, error)
+	CreateUser(ctx context.Context, name, surname, email, password, role string) (*entity.User, string, string, error)
 	GetAllUsers(ctx context.Context) ([]entity.User, error)
 	GetUserById(ctx context.Context, id int) (*entity.User, error)
 	PatchUser(ctx context.Context, id int, name, surname, email, password, role *string) (*entity.User, error)
 	DeleteUser(ctx context.Context, id int) error
 
-	Login(ctx context.Context, email, password string) (string, string, error)
-	RefreshTokens(ctx context.Context, id int) (string, string, error)
+	Login(ctx context.Context, email, password string) (*entity.User, string, string, error)
+	RefreshTokens(ctx context.Context, id int) (*entity.User, string, string, error)
 }
 
 type validatorService interface {
@@ -45,7 +45,7 @@ func NewUserHandler(service userService, tools validatorService) *UserHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      dto.UserRequest  true  "Данные нового пользователя"
-// @Success      201      {object}  dto.TokenResponse
+// @Success      201      {object}  dto.UserResponse
 // @Failure      400      {object}  dto.ErrorResponse
 // @Failure      409      {object}  dto.ErrorResponse
 // @Failure      500      {object}  dto.ErrorResponse
@@ -67,7 +67,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		return h.validator.ValidateError(c, err)
 	}
 
-	accessToken, refreshToken, err := h.service.CreateUser(
+	user, accessToken, refreshToken, err := h.service.CreateUser(
 		c.Request().Context(),
 		request.Name,
 		request.Surname,
@@ -79,9 +79,17 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		return h.validator.ValidateError(c, err)
 	}
 
-	return c.JSON(http.StatusCreated, dto.TokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+	return c.JSON(http.StatusCreated, dto.UserResponse{
+		Id:       user.Id,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+		Role:     user.Role,
+		IsActive: user.IsActive,
+		Tokens: dto.TokenResponse{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	})
 }
 
@@ -244,7 +252,7 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 // @Description  Требует действующий refresh-токен в заголовке Authorization.
 // @Tags         auth
 // @Produce      json
-// @Success      200  {object}  dto.TokenResponse
+// @Success      200  {object}  dto.UserResponse
 // @Failure      401  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Security     BearerAuth
@@ -253,14 +261,22 @@ func (h *UserHandler) RefreshTokens(c echo.Context) error {
 	userId := c.Get("userId")
 	id := int(userId.(float64))
 
-	accessToken, refreshToken, err := h.service.RefreshTokens(c.Request().Context(), id)
+	user, accessToken, refreshToken, err := h.service.RefreshTokens(c.Request().Context(), id)
 	if err != nil {
 		return h.validator.ValidateError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, dto.TokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+	return c.JSON(http.StatusOK, dto.UserResponse{
+		Id:       user.Id,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+		Role:     user.Role,
+		IsActive: user.IsActive,
+		Tokens: dto.TokenResponse{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	})
 }
 
@@ -271,7 +287,7 @@ func (h *UserHandler) RefreshTokens(c echo.Context) error {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      dto.LoginRequest  true  "Email и пароль"
-// @Success      200      {object}  dto.TokenResponse
+// @Success      200      {object}  dto.UserResponse
 // @Failure      400      {object}  dto.ErrorResponse
 // @Failure      401      {object}  dto.ErrorResponse
 // @Failure      500      {object}  dto.ErrorResponse
@@ -289,13 +305,21 @@ func (h *UserHandler) Login(c echo.Context) error {
 		return h.validator.ValidateError(c, err)
 	}
 
-	accessToken, refreshToken, err := h.service.Login(c.Request().Context(), request.Email, request.Password)
+	user, accessToken, refreshToken, err := h.service.Login(c.Request().Context(), request.Email, request.Password)
 	if err != nil {
 		return h.validator.ValidateError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, dto.TokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+	return c.JSON(http.StatusOK, dto.UserResponse{
+		Id:       user.Id,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+		Role:     user.Role,
+		IsActive: user.IsActive,
+		Tokens: dto.TokenResponse{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	})
 }
