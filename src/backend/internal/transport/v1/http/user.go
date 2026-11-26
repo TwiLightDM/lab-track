@@ -47,6 +47,8 @@ func NewUserHandler(service userService, tools validatorService) *UserHandler {
 // @Param        request  body      dto.UserRequest  true  "Данные нового пользователя"
 // @Success      201      {object}  dto.UserResponse
 // @Failure      400      {object}  dto.ErrorResponse
+// @Failure      401      {object}  dto.ErrorResponse
+// @Failure      403      {object}  dto.ErrorResponse
 // @Failure      409      {object}  dto.ErrorResponse
 // @Failure      500      {object}  dto.ErrorResponse
 // @Security     BearerAuth
@@ -86,7 +88,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		Email:    user.Email,
 		Role:     user.Role,
 		IsActive: user.IsActive,
-		Tokens: dto.TokenResponse{
+		Tokens: &dto.TokenResponse{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		},
@@ -247,6 +249,37 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
+// GetMe
+// @Summary      Получить профиль текущего пользователя
+// @Description  Возвращает данные авторизованного пользователя на основе userId из JWT-токена
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  dto.UserResponse
+// @Failure      401  {object}  dto.ErrorResponse
+// @Failure      404  {object}  dto.ErrorResponse
+// @Failure      500  {object}  dto.ErrorResponse
+// @Router       /users/me [get]
+func (h *UserHandler) GetMe(c echo.Context) error {
+	userId := c.Get("userId")
+	id := int(userId.(float64))
+
+	user, err := h.service.GetUserById(c.Request().Context(), id)
+	if err != nil {
+		return h.validator.ValidateError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, dto.UserResponse{
+		Id:       user.Id,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+		Role:     user.Role,
+		IsActive: user.IsActive,
+	})
+}
+
 // RefreshTokens
 // @Summary      Обновить токены
 // @Description  Требует действующий refresh-токен в заголовке Authorization.
@@ -273,7 +306,7 @@ func (h *UserHandler) RefreshTokens(c echo.Context) error {
 		Email:    user.Email,
 		Role:     user.Role,
 		IsActive: user.IsActive,
-		Tokens: dto.TokenResponse{
+		Tokens: &dto.TokenResponse{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		},
@@ -317,7 +350,7 @@ func (h *UserHandler) Login(c echo.Context) error {
 		Email:    user.Email,
 		Role:     user.Role,
 		IsActive: user.IsActive,
-		Tokens: dto.TokenResponse{
+		Tokens: &dto.TokenResponse{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		},

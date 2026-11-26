@@ -22,16 +22,16 @@ type LoginRequest struct {
 }
 
 type UserResponse struct {
-	Id       int           `json:"id"`
-	Name     string        `json:"name"`
-	Surname  string        `json:"surname"`
-	Email    string        `json:"email"`
-	Role     string        `json:"role"`
-	IsActive bool          `json:"is_active"`
-	Tokens   TokenResponse `json:"tokens,omitempty"`
+	Id       int            `json:"id"`
+	Name     string         `json:"name"`
+	Surname  string         `json:"surname"`
+	Email    string         `json:"email"`
+	Role     string         `json:"role"`
+	IsActive bool           `json:"is_active"`
+	Tokens   *TokenResponse `json:"tokens,omitempty"`
 }
 
 type TokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }

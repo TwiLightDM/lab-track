@@ -192,6 +192,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "409":
           description: Conflict
           schema:
@@ -302,6 +310,36 @@ paths:
       security:
       - BearerAuth: []
       summary: Обновить пользователя
+      tags:
+      - users
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает данные авторизованного пользователя на основе userId
+        из JWT-токена
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить профиль текущего пользователя
       tags:
       - users
 securityDefinitions:

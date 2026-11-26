@@ -110,6 +110,7 @@ func registerRoutes(
 	public.POST("/refresh", userHandler.RefreshTokens, mw.BearerAuth())
 
 	users.POST("", userHandler.CreateUser, mw.AdminCheck())
+	users.GET("/me", userHandler.GetMe)
 	users.GET("", userHandler.GetAllUsers)
 	users.GET("/:id", userHandler.GetUserById)
 	users.PATCH("/:id", userHandler.PatchUser)

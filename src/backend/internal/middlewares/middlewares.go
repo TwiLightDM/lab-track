@@ -47,7 +47,7 @@ func (mw *MWManager) BearerAuth() echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
 			if authHeader == "" {
-				return errs.ErrMissingToken
+				return mw.validator.ValidateError(c, errs.ErrMissingToken)
 			}
 
 			parts := strings.Split(authHeader, " ")
