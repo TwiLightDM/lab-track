@@ -1,7 +1,6 @@
 name: Go CI V1 - Baseline
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
 

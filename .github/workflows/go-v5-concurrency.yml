@@ -1,7 +1,6 @@
 name: Go CI V5 - Full Optimized
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
 
