@@ -45,6 +45,7 @@ func Run(cfg *config.Config) {
 	validatorService := tools.NewValidatorService()
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Recover())
