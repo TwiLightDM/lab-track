@@ -1,0 +1,15 @@
+template: testify
+
+packages:
+  github.com/TwiLightDM/lab-track/internal/service:
+    interfaces:
+      UserRepository:
+        config:
+          dir: internal/mocks
+          pkgname: mocks
+          filename: repositories.go
+      JWTGenerator:
+        config:
+          dir: internal/mocks
+          pkgname: mocks
+          filename: tools.go
