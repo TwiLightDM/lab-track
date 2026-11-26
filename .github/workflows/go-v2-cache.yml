@@ -1,6 +1,8 @@
 name: Go CI V2 - Go Cache
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:

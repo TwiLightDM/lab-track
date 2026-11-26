@@ -1,6 +1,8 @@
 name: Go CI V3 - Docker Cache
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
