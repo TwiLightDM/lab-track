@@ -37,6 +37,7 @@ func (v *ValidatorService) ValidateError(c echo.Context, err error) error {
 		errors.Is(err, errs.ErrMissingToken),
 		errors.Is(err, errs.ErrInvalidToken),
 		errors.Is(err, errs.ErrTokenExpired),
+		errors.Is(err, errs.ErrFailedParseToken),
 		errors.Is(err, errs.ErrUnknownRole):
 		status = http.StatusUnauthorized
 	case errors.Is(err, errs.ErrForbidden):
@@ -74,6 +75,8 @@ func errorCode(err error) string {
 		{errs.ErrUnknownRole, "ErrUnknownRole"},
 		{errs.ErrInvalidJSON, "ErrInvalidJSON"},
 		{errs.ErrTokenExpired, "ErrTokenExpired"},
+		{errs.ErrFailedParseToken, "ErrFailedParseToken"},
+		{errs.ErrFailedToSignToken, "ErrFailedToSignToken"},
 	}
 
 	for _, item := range errorCodes {
