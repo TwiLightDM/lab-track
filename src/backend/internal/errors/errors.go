@@ -15,7 +15,9 @@ var (
 	ErrDuplicatedKey      = errors.New("такая сущность уже существует")
 	ErrForeignKeyViolated = errors.New("ошибка внешнего ключа")
 
-	ErrMissingToken = errors.New("отсутствует токен")
-	ErrInvalidToken = errors.New("проблема с токеном")
-	ErrTokenExpired = errors.New("время жизни токена исчерпано")
+	ErrMissingToken      = errors.New("отсутствует токен")
+	ErrInvalidToken      = errors.New("проблема с токеном")
+	ErrTokenExpired      = errors.New("время жизни токена исчерпано")
+	ErrFailedParseToken  = errors.New("проблема с данными внутри токена")
+	ErrFailedToSignToken = errors.New("проблема с подписанием токена")
 )
