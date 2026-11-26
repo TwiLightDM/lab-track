@@ -2,8 +2,8 @@
 name: Frontend CI V2 - NPM Cache
 
 on:
-  workflow_dispatch:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
