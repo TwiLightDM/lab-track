@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	errs "github.com/TwiLightDM/lab-track/internal/errors"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -34,7 +35,7 @@ func (s *JWTService) generateJWT(data map[string]any, expiredAt *time.Time) (str
 
 	signedToken, err := token.SignedString([]byte(s.key))
 	if err != nil {
-		return "", fmt.Errorf("не получилось подписать токен: %w", err)
+		return "", errs.ErrFailedToSignToken
 	}
 
 	return signedToken, nil
@@ -57,17 +58,17 @@ func (s *JWTService) ParseJWT(tokenString string) (map[string]any, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("не получилось получить данные из токена: %w", err)
+		return nil, errs.ErrTokenExpired
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return nil, fmt.Errorf("невалидные данные внутри токена: %w", err)
+		return nil, errs.ErrFailedParseToken
 	}
 
 	if expiredAt, ok := claims["exp"].(float64); ok {
 		if time.Now().Unix() > int64(expiredAt) {
-			return nil, fmt.Errorf("время жизни токена исчерпано")
+			return nil, fmt.Errorf("время жизни токена исчерпано: %w", errs.ErrTokenExpired)
 		}
 	}
 
