@@ -20,7 +20,7 @@ const createResponse = (
   data: unknown = { success: true },
 ): AxiosResponse => ({
   data,
-  status: 200,
+  status: 201,
   statusText: "OK",
   headers: {},
   config,
@@ -142,7 +142,7 @@ describe("Axios instance", () => {
       "Bearer new-access-token",
     ]);
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
   });
 
   it("не пытается обновлять токены при ошибке авторизации на login", async () => {
@@ -238,8 +238,8 @@ describe("Axios instance", () => {
       secondRequest,
     ]);
 
-    expect(firstResponse.status).toBe(200);
-    expect(secondResponse.status).toBe(200);
+    expect(firstResponse.status).toBe(201);
+    expect(secondResponse.status).toBe(201);
 
     expect(refreshSpy).toHaveBeenCalledTimes(1);
 
