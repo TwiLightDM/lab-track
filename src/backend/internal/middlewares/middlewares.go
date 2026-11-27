@@ -27,13 +27,22 @@ func NewMWManager(parseJWTService ParseJWTService, validator ValidatorService) *
 func (mw *MWManager) AdminCheck() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			userRole := c.Get("role")
-			role, ok := userRole.(string)
-			if !ok {
-				return mw.validator.ValidateError(c, errs.ErrUnknownRole)
+			userRole := c.Get("role").(string)
+			if userRole != "admin" {
+				return mw.validator.ValidateError(c, errs.ErrForbidden)
 			}
 
-			if role != "admin" {
+			return next(c)
+		}
+	}
+}
+
+func (mw *MWManager) AdminAndManagerCheck() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			userRole := c.Get("role").(string)
+
+			if userRole == "lab_assistant" || userRole == "repairman" {
 				return mw.validator.ValidateError(c, errs.ErrForbidden)
 			}
 

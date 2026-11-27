@@ -8,7 +8,7 @@ import (
 // @title        lab track api
 // @version      1.0
 // @description  API для управления лабораторным оборудованием
-// @host         localhost:8080/api/v1
+// @host         localhost:9080/api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
