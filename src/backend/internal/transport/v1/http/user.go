@@ -100,6 +100,8 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Tags         users
 // @Produce      json
 // @Success      200  {array}   dto.UserResponse
+// @Failure      401  {object}  dto.ErrorResponse
+// @Failure      403  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Security     BearerAuth
 // @Router       /users [get]
@@ -132,6 +134,8 @@ func (h *UserHandler) GetAllUsers(c echo.Context) error {
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  dto.UserResponse
 // @Failure      400  {object}  dto.ErrorResponse
+// @Failure      401  {object}  dto.ErrorResponse
+// @Failure      403  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Security     BearerAuth
@@ -167,6 +171,8 @@ func (h *UserHandler) GetUserById(c echo.Context) error {
 // @Param        request  body      dto.PatchUserRequest   true  "Поля для обновления"
 // @Success      200      {object}  dto.UserResponse
 // @Failure      400      {object}  dto.ErrorResponse
+// @Failure      401      {object}  dto.ErrorResponse
+// @Failure      403      {object}  dto.ErrorResponse
 // @Failure      404      {object}  dto.ErrorResponse
 // @Failure      500      {object}  dto.ErrorResponse
 // @Security     BearerAuth
@@ -175,6 +181,14 @@ func (h *UserHandler) PatchUser(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return h.validator.ValidateError(c, fmt.Errorf("невалидный id: %w", errs.ErrInvalidValue))
+	}
+
+	userRole := c.Get("role").(string)
+	userIdFloat := c.Get("userId").(float64)
+	userId := int(userIdFloat)
+
+	if userRole != "admin" && userId != id {
+		return h.validator.ValidateError(c, errs.ErrForbidden)
 	}
 
 	var request dto.PatchUserRequest
@@ -231,6 +245,8 @@ func (h *UserHandler) PatchUser(c echo.Context) error {
 // @Param        id   path  int  true  "ID пользователя"
 // @Success      204  "Пользователь удалён"
 // @Failure      400  {object}  dto.ErrorResponse
+// @Failure      401  {object}  dto.ErrorResponse
+// @Failure      403  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Security     BearerAuth

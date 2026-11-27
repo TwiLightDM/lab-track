@@ -111,8 +111,8 @@ func registerRoutes(
 
 	users.POST("", userHandler.CreateUser, mw.AdminCheck())
 	users.GET("/me", userHandler.GetMe)
-	users.GET("", userHandler.GetAllUsers)
-	users.GET("/:id", userHandler.GetUserById)
+	users.GET("/:id", userHandler.GetUserById, mw.AdminAndManagerCheck())
+	users.GET("", userHandler.GetAllUsers, mw.AdminCheck())
 	users.PATCH("/:id", userHandler.PatchUser)
-	users.DELETE("/:id", userHandler.DeleteUser)
+	users.DELETE("/:id", userHandler.DeleteUser, mw.AdminCheck())
 }
