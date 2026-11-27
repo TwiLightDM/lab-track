@@ -1,1 +1,1 @@
-export type { IUser, UserRole } from './model/types';
+export type { IUser, UserRole } from "./model/types";
