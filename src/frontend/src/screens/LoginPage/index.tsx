@@ -1,4 +1,4 @@
-import { Context } from "@/app/providers/AuthProvider";
+import { Context } from "@/app/providers/AuthContext";
 import type { ILoginData } from "@/features/auth";
 import LoginForm from "@/features/auth/ui/LoginForm";
 import { useContext } from "react";

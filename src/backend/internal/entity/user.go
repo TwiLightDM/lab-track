@@ -10,7 +10,7 @@ type User struct {
 	Id        int
 	Name      string
 	Surname   string
-	Email     string
+	Email     string `gorm:"uniqueIndex;not null"`
 	Password  string
 	Role      string
 	IsActive  bool
